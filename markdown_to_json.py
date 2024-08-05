@@ -24,6 +24,7 @@ specific_header = ["Name", "Badge", "Markdown"]  # Example headers
 
 # Initialize a list to store the JSON output
 json_output = []
+name_map = {}
 
 # Process each table
 for table in tables:
@@ -35,16 +36,10 @@ for table in tables:
         # Extract the link only
         df["Link"] = df["Markdown"].apply(extract_url)
         
-        # Drop redundant columns
-        df = df.drop(columns=["Badge", "Markdown"])
-   
-        
-        # Convert DataFrame to JSON
-        json_data = df.to_json(orient='records')
-        
-        # Append JSON data to the output list
-        json_output.extend(json.loads(json_data))
+        for index, row in df.iterrows():
+            name_map[row["Name"]] = row["Link"]
+
 
 # Optionally, save the JSON output to a file
 with open('markdown-badges.json', 'w', encoding='utf-8') as json_file:
-    json.dump(json_output, json_file, indent=4, ensure_ascii=False)
+    json.dump(name_map, json_file, indent=4, ensure_ascii=False)
